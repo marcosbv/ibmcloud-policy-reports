@@ -2,7 +2,7 @@
 
  echo '* Downloading script files...'
 
-for i in gatherData.sh policiesForResources.js resourceAccessForUser.js utils.js
+for i in gatherData.sh policiesForResource.js resourceAccessForUser.js utils.js
 do
     curl -sL https://raw.githubusercontent.com/marcosbv/ibmcloud-policy-reports/master/$i -o $i
 done
