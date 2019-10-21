@@ -34,7 +34,7 @@ ibmcloud resource groups --output json > resource_groups.json
 ibmcloud resource service-instances --output json > resources.json
 
 # Clusters
-ibmcloud ks clusters --json > clusters.json
+ibmcloud ks clusters -s --json > clusters.json
 
 # Usuarios:
 ibmcloud account users --output json > users.json
