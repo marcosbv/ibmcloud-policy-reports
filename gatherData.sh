@@ -45,3 +45,15 @@ rm -vfr data/
 mkdir data
 
 mv *.json ./data
+
+set +x
+echo
+echo "-------------------------------------------------------------------------"
+
+echo "Data snapshot successfully taken."
+echo "Now you can start typing commands to generate text reports about policies:"
+echo "node policiesForResource.js [<ResourceName1> <ResourceName2> ...]"
+echo "node resourceAccessForUser.js [<UserEmail1> <UserEmail2> ...]"
+echo "node policiesForRole.js <Role1> [<Role2> ...]"
+echo "Check out README files for additional information"
+echo "Please share your feedback at marcosbv@br.ibm.com. Have fun!"

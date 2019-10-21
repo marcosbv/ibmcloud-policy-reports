@@ -265,6 +265,9 @@ utils.policiesForUser = function(user, accessGroups, policies) {
     return matchedPolicies
 } 
 
+/**
+ * Get all resources that belongs to a resource group
+ */
 utils.resourcesInResourceGroup = function(resourceGroup, resources) {
     let matchedResources = []
 
@@ -275,5 +278,24 @@ utils.resourcesInResourceGroup = function(resourceGroup, resources) {
     })
 
     return matchedResources
+}
+
+/**
+ * Get all policies that applies to a role (i.e. Administrator)
+ */
+utils.policiesForRole = function(roles, policies) {
+    let matchedPolicies = []
+    let rolesArr = roles.split(",")
+
+    policies.forEach(function (policy, map) {
+        for(let j=0;j<rolesArr.length;j++) {
+            if(policy.roles.indexOf(rolesArr[j]) >= 0) {
+                matchedPolicies.push(policy)
+                break;
+            } 
+        }
+    })
+
+    return matchedPolicies;
 }
 module.exports = utils

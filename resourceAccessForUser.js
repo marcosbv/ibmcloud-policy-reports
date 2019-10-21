@@ -41,8 +41,6 @@ for(let i=0; i<usersToCheck.length; i++) {
     console.log(`*** User: ${r.name} (${r.email})`)
     let policiesForUser = utils.policiesForUser(r, accessGroups, policies)
 
-    /// continua
-
     let checkedResources = 0
     resources.forEach(function(resource, key) {
 

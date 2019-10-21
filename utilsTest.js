@@ -71,6 +71,11 @@ console.log("=========================>>> POLICIES FOR USERS")
     })
     
 
+console.log("============================>>> ADMINISTRATOR POLICIES ") 
+
+console.log(utils.policiesForRole("Administrator", policies))
+
+
 
 
 
