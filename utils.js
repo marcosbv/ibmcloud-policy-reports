@@ -176,7 +176,11 @@ utils.loadPolicies = function() {
             }
 
             if(resource_attribute.name == "serviceInstance" || resource_attribute.name == "resourceGroupId" || resource_attribute.name == "resource") {
-                object.resource = resource_attribute.value
+                // asterisk is the same of all, so we won't change it by now
+                if(resource_attribute.value != "*") {
+                    object.resource = resource_attribute.value
+                }
+               
             }
 
             if(resource_attribute.name == "resourceType") {
