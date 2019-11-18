@@ -15,6 +15,10 @@ echo "Getting IAM policies for account id $ACCOUNT_ID"
 curl -X GET "https://iam.cloud.ibm.com/v1/policies?account_id=$ACCOUNT_ID" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -o policies.json
 
 set -x 
+
+# Desabilita update checks
+ibmcloud config --check-version=false
+
 # Access groups:
 ibmcloud iam access-groups --output json > groups.json
 
