@@ -55,5 +55,6 @@ echo "Now you can start typing commands to generate text reports about policies:
 echo "node policiesForResource.js [<ResourceName1> <ResourceName2> ...]"
 echo "node resourceAccessForUser.js [<UserEmail1> <UserEmail2> ...]"
 echo "node policiesForRole.js <Role1> [<Role2> ...]"
+echo "node latestUserLogin.js <LogDNA_Export_Key>"
 echo "Check out README files for additional information"
 echo "Please share your feedback at marcosbv@br.ibm.com. Have fun!"
