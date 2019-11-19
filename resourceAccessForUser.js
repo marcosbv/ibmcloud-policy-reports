@@ -1,11 +1,13 @@
 
 let utils = require('./utils.js')
-let userNameList = process.argv.length > 1 ? process.argv.slice(2) : []
+let programParams = utils.extractParameters(process.argv)
+
+let userNameList = programParams.args
 
 // Load main objects
 
 let users = utils.loadUsers()
-console.log(`Loaded ${users.size} users.`)
+utils.output(programParams.format, `Loaded ${users.size} users.`)
 
 
 let usersToCheck = []
@@ -33,12 +35,14 @@ let policies = utils.loadPolicies()
 let accessGroups = utils.loadAccessGroups()
 let resourceGroups = utils.loadResourceGroups()
 
-console.log(`Loaded ${resources.size} resources.`)
-console.log(`Loaded ${policies.size} policies.`)
+utils.output(programParams.format, `Loaded ${resources.size} resources.`)
+utils.output(programParams.format, `Loaded ${policies.size} policies.`)
 
+// CSV Header
+utils.output(programParams.format, "", ["User Name", "Email", "Resource", "Policy ID", "Policy Subject", "Policy Target", "Policy Roles"])
 for(let i=0; i<usersToCheck.length; i++) {
     let r = usersToCheck[i]
-    console.log(`*** User: ${r.name} (${r.email})`)
+    utils.output(programParams.format, `*** User: ${r.name} (${r.email})`)
     let policiesForUser = utils.policiesForUser(r, accessGroups, policies)
 
     let checkedResources = 0
@@ -48,11 +52,18 @@ for(let i=0; i<usersToCheck.length; i++) {
 
       
         if(policiesForResource.length > 0) {
-           console.log(`     RESOURCE: ${resource.name} (${resource.id})`)
-           policiesForResource.forEach(function(resourcePolicy, key) {
-              console.log(`          Policy: Subject=${resourcePolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(resourcePolicy.subject).name : resourcePolicy.subject}  Roles=${resourcePolicy.roles} (${resourcePolicy.id})`)
+            utils.output(programParams.format, `     RESOURCE: ${resource.name} (${resource.id})`)
+            policiesForResource.forEach(function(resourcePolicy, key) {
+               // CSV line will be printed out HERE!
+               utils.output(programParams.format, `          Policy: Subject=${resourcePolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(resourcePolicy.subject).name : resourcePolicy.subject}  Roles=${resourcePolicy.roles} (${resourcePolicy.id})`,
+                            [
+                               r.name, r.email, resource.name, resourcePolicy.id, 
+                               resourcePolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(resourcePolicy.subject).name : resourcePolicy.subject,
+                               `[Service: ${resourcePolicy.service_type}, Region: ${resourcePolicy.region}, ${resourceGroups.get(resourcePolicy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(resourcePolicy.resource)!=null ? resourceGroups.get(resourcePolicy.resource).name : resourcePolicy.resource}]`,
+                               resourcePolicy.roles.join(",")
+                            ])
            })
-           console.log(`     (${policiesForResource.length} policies)`)
+           utils.output(programParams.format, `     (${policiesForResource.length} policies)`)
            checkedResources++
         }
     })
@@ -65,10 +76,10 @@ for(let i=0; i<usersToCheck.length; i++) {
         }
     })
 */
-    console.log("\n     ALL POLICIES FOR USER:")
+    utils.output(programParams.format, "\n     ALL POLICIES FOR USER:")
     policiesForUser.forEach(function(policy, key) {
-            console.log(`     Policy: Id=${policy.id} Subject=${policy.subject} Roles=${policy.roles} 
+        utils.output(programParams.format, `     Policy: Id=${policy.id} Subject=${policy.subject} Roles=${policy.roles} 
              Target=[Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(policy.resource)!=null ? resourceGroups.get(policy.resource).name : policy.resource}]`)
     })
-    console.log(`(${checkedResources} resources, ${policiesForUser.length} policies)`)
+    utils.output(programParams.format, `(${checkedResources} resources, ${policiesForUser.length} policies)`)
 }

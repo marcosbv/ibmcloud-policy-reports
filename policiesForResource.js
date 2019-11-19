@@ -1,11 +1,13 @@
 
 let utils = require('./utils.js')
-let resourceNameList = process.argv.length > 1 ? process.argv.slice(2) : []
+
+let programParams = utils.extractParameters(process.argv)
+let resourceNameList = programParams.args
 
 // Load main objects
 
 let resources = utils.loadResources()
-console.log(`Loaded ${resources.size} resources.`)
+utils.output(programParams.format, `Loaded ${resources.size} resources.`)
 
 
 let resourcesToCheck = []
@@ -33,11 +35,14 @@ let policies = utils.loadPolicies()
 let accessGroups = utils.loadAccessGroups()
 let resourceGroups = utils.loadResourceGroups()
 
-console.log(`Loaded ${policies.size} policies.`)
+utils.output(programParams.format,`Loaded ${policies.size} policies.`)
+
+// CSV header
+utils.output(programParams.format, "", ["Resource", "Username","Email", "Policy ID", "Policy Subject", "Policy Target", "Policy Roles"])
 
 for(let i=0; i<resourcesToCheck.length; i++) {
     let r = resourcesToCheck[i]
-    console.log(`*** Resource: ${r.name} (${r.id})`)
+    utils.output(programParams.format,`*** Resource: ${r.name} (${r.id})`)
     let policiesForResource = utils.policiesByResource(r, policies)
     let usersToCheck = []
     policiesForResource.forEach(function(policy, key) {
@@ -71,27 +76,38 @@ for(let i=0; i<resourcesToCheck.length; i++) {
        if(user == null) {
            continue
        }
-       console.log(`     USER: ${user.name} (${user.email})`)
+       utils.output(programParams.format,`     USER: ${user.name} (${user.email})`)
 
        let policiesForUser = utils.policiesForUser(user, accessGroups, policiesForResource);
        policiesForUser.forEach(function(userPolicy, key) {
-           console.log(`          Policy: Subject=${userPolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(userPolicy.subject).name : user.name}  Roles=${userPolicy.roles} (${userPolicy.id})`)
+           // CSV user line printed HERE!!
+           utils.output(programParams.format,`          Policy: Subject=${userPolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(userPolicy.subject).name : user.name}  Roles=${userPolicy.roles} (${userPolicy.id})`,
+                       [r.name, user.name, user.email, userPolicy.id, 
+                        userPolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(userPolicy.subject).name : user.name,
+                        `[Service: ${userPolicy.service_type}, Region: ${userPolicy.region}, ${resourceGroups.get(userPolicy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(userPolicy.resource)!=null ? resourceGroups.get(userPolicy.resource).name : userPolicy.resource}]`,
+                        userPolicy.roles.join(",")
+                        ])
        })
 
-       console.log(`     (${policiesForUser.length} policies)`)
+       utils.output(programParams.format,`     (${policiesForUser.length} policies)`)
     }
 
-    console.log("\n     SERVICE IDS:")
+    utils.output(programParams.format,"\n     SERVICE IDS:")
     policiesForResource.forEach(function(policy, key) {
         if(policy.subject.indexOf("ServiceId") >= 0) {
-            console.log(`          Policy: Subject=${policy.subject}  Roles=${policy.roles} (${policy.id})`)
+            // CSV service user line printed HERE!!
+            utils.output(programParams.format,`          Policy: Subject=${policy.subject}  Roles=${policy.roles} (${policy.id})`,
+            [r.name, policy.subject, "", policy.id, policy.subject,
+                `[Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(policy.resource)!=null ? resourceGroups.get(policy.resource).name : policy.resource}]`,
+                policy.roles.join(",")
+            ])
         }
     })
 
-    console.log("\n     ALL POLICIES FOR RESOURCE:")
+    utils.output(programParams.format,"\n     ALL POLICIES FOR RESOURCE:")
     policiesForResource.forEach(function(policy, key) {
-            console.log(`     Policy: Id=${policy.id} Subject=${policy.subject} Roles=${policy.roles} 
+        utils.output(programParams.format,`     Policy: Id=${policy.id} Subject=${policy.subject} Roles=${policy.roles} 
              Target=[Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(policy.resource)!=null ? resourceGroups.get(policy.resource).name : policy.resource}]`)
     })
-    console.log(`(${usersToCheck.length} users, ${policiesForResource.length} policies)`)
+    utils.output(programParams.format,`(${usersToCheck.length} users, ${policiesForResource.length} policies)`)
 }

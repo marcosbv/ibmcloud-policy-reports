@@ -302,4 +302,53 @@ utils.policiesForRole = function(roles, policies) {
 
     return matchedPolicies;
 }
+
+/**
+ *  Extract format from program args. The format (--csv or --json) must be the first item in array.
+ * @param args Args received from command-line
+ * @returns an object with format and remaining arguments 
+ */
+utils.extractParameters = function(args) {
+
+    let result = {}
+    result.format = "stdout"
+    result.args = []
+    if(args.length > 1) {
+       if(args.length > 2) {
+           if(args[2].indexOf("--") == 0) {
+               result.format = args[2].substring(2)
+               result.args = args.slice(3)
+           } else {
+               result.args = args.slice(2)
+           }
+       } else {
+           result.args = args.slice(2)
+       }
+    }
+
+    return result
+}
+
+/**
+ * Performs report output, according to format.
+ * @param format   Report output format. Implemented values: stdout, csv
+ * @param line     Line to send to console (only stdout)
+ * @param csvArr   Array of strings to return into CSV output (it will be logged in Node console)
+ */
+utils.output = function(format, line, csvArr) {
+    if(format == "stdout" && line.trim() != "") {
+        console.log(line)
+    }
+
+    if(format == "csv") {
+        // only non-empty arrays will be printed out. This is useful 
+        // when normal stdout messages must be suppressed from file output.
+        if(csvArr) {
+            if(csvArr.length > 0) {
+                console.log(csvArr.join(";"))
+            }
+        }
+    }
+}
+
 module.exports = utils

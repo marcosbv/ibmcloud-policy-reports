@@ -77,5 +77,25 @@ console.log(utils.policiesForRole("Administrator", policies))
 
 
 
+let argsTest = ["node", "myProgram.js", "--csv", "param1", "param2"]
+console.log("============================>>>>>>> EXTRACT PARAMETERS")
+console.log(process.argv)
+let argsRet = utils.extractParameters(argsTest)
+console.log(`Format=${argsRet.format} Params=${argsRet.args}`)
 
+argsTest = ["node","myProgram.js", "param0", "param1", "param2"]
+argsRet = utils.extractParameters(argsTest)
+console.log(`Format=${argsRet.format} Params=${argsRet.args}`)
+
+argsTest = ["node","myProgram.js", "param0", "param1"]
+argsRet = utils.extractParameters(argsTest)
+console.log(`Format=${argsRet.format} Params=${argsRet.args}`)
+
+argsTest = ["node","myProgram.js", "--json", "param1"]
+argsRet = utils.extractParameters(argsTest)
+console.log(`Format=${argsRet.format} Params=${argsRet.args}`)
+
+argsTest = ["node","myProgram.js", "param0"]
+argsRet = utils.extractParameters(argsTest)
+console.log(`Format=${argsRet.format} Params=${argsRet.args}`)
 

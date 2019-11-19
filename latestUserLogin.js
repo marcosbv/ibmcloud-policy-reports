@@ -6,17 +6,19 @@ let now = new Date()
 let users = utils.loadUsers()
 let accessGroups = utils.loadAccessGroups()
 
+let programParams = utils.extractParameters(process.argv)
+
 var params = {
     url : "https://api.eu-de.logging.cloud.ibm.com/v1/export",
     filters : "login user-refreshtoken",
-    service_key: process.argv[2],
+    service_key: programParams.args[0],
     regex: "user"
 }
 
 let timestamp = now.getTime() - 2592000000;
 let userLogins = new Map()
 
-console.log(`Loaded ${users.size} users.`)
+utils.output(programParams.format, `Loaded ${users.size} users.`)
 let usersArr= []
 
 users.forEach(function(user, key) {
@@ -26,10 +28,12 @@ users.forEach(function(user, key) {
 mainLoop(usersArr)
 
 async function mainLoop(usersArr) {
+    // CSV header
+    utils.output(programParams.format,"", ["User", "Email", "Last Token Refresh", "Groups"])
     for(let i=0;i<usersArr.length;i++) {
         let user = usersArr[i]
         await collectLogDNARecord(user)
-        console.log("-----------")
+        utils.output(programParams.format, "-----------")
     }
 }
 
@@ -56,9 +60,11 @@ async function collectLogDNARecord(user) {
                 // console.log(Buffer.concat(buffer).toString())
 
                 let data = Buffer.concat(buffer).toString().trim()
+                let lastLogin = null
                 if(data=="") {
-                    console.log(`User: ${user.name} (${user.email})\nLast token refresh: no LogDNA record`)
-                    resolve()
+                    lastLogin = "no LogDNA record"
+                   // console.log(`User: ${user.name} (${user.email})\nLast token refresh: no LogDNA record`)
+                   // resolve()
                 } else {
                     let logMetrics = JSON.parse(data)
                     // console.log(logMetrics)
@@ -69,8 +75,9 @@ async function collectLogDNARecord(user) {
                     let message = logMetrics.message
                     let userM = message.substring(message.indexOf('refreshtoken') + 13)
                     let timestamp = new Date(logMetrics._ts).toISOString()
-                    console.log(`User: ${user.name} (${user.email})\nLast token refresh: ${timestamp}`)
-                    resolve(logMetrics)
+                    lastLogin = timestamp
+                    // console.log(`User: ${user.name} (${user.email})\nLast token refresh: ${timestamp}`)
+                   // resolve(logMetrics)
                 }
                 
                 let userAccessGroups = utils.groupsUserBelongsTo(user, accessGroups)
@@ -81,7 +88,10 @@ async function collectLogDNARecord(user) {
                     accessGroupNames.push(accessGroup.name)
                 }
     
-                console.log("Groups: " + accessGroupNames.join(","))
+                utils.output(programParams.format, `User: ${user.name} (${user.email})\nLast token refresh: ${lastLogin}\nGroups: ${accessGroupNames.join(",")}`,
+                             [user.name, user.email, lastLogin, accessGroupNames.join(",") ])
+
+                resolve()
               
             })
            
