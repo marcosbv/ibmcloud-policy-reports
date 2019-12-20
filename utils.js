@@ -233,7 +233,7 @@ utils.policiesByResource = function (resource, policies) {
 
         // 2. matches all resources in platform?
         if(policy.resource == "all" && policy.resource_type != "resource-group") {
-            if(policy.service_type == resource.service_type || policy.service_type == "all") {
+            if(policy.service_type == resource.service_type || policy.service_type == "all_iam_services") {
                 if(policy.region == "all" || policy.region == resource.region) {
                    policiesList.push(policy)
                    return
@@ -244,7 +244,7 @@ utils.policiesByResource = function (resource, policies) {
 
         // 3. matches resource group ?
         if(policy.resource == resource.resource_group && policy.resource_type != "resource-group") {
-            if(policy.service_type == resource.service_type || policy.service_type == "all") {
+            if(policy.service_type == resource.service_type || policy.service_type == "all_iam_services") {
                 if(policy.region == "all" || policy.region == resource.region) {
                    policiesList.push(policy)
                    return
