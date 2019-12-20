@@ -159,7 +159,7 @@ utils.loadPolicies = function() {
         let object = {}
 
         object.id = policy.id
-        object.service_type = "all"
+        object.service_type = "all_iam_services"
         object.region = "all"
         object.resource = "all"
 
@@ -181,6 +181,13 @@ utils.loadPolicies = function() {
                     object.resource = resource_attribute.value
                 }
                
+            }
+
+            // capture policies for ALL Platform Services access
+            if(resource_attribute.name == "serviceType") {
+                if(resource_attribute.value == "platform_service") {
+                    object.service_type = "all_account_services" 
+                }
             }
 
             if(resource_attribute.name == "resourceType") {
@@ -301,6 +308,42 @@ utils.policiesForRole = function(roles, policies) {
     })
 
     return matchedPolicies;
+}
+
+/**
+ * Get all policies for an array of services
+ */
+utils.policiesForServices = function(services, policies) {
+
+    
+
+    for(let i=0;i<services.length;i++) {
+       
+       if(services[i] == "account") {
+           services = services.concat([
+              "iam-groups",
+              "iam-identity",
+              "support",
+              "entitlement",
+              "user-management",
+              "billing",
+              "all_account_services",
+              "enterprise",
+              "globalcatalog"
+           ])
+           console.log(services)
+           break;
+       }
+    }
+
+    let matchedPolicies = []
+    policies.forEach(function (policy, map) {
+        if(services.indexOf(policy.service_type) >= 0) {
+            matchedPolicies.push(policy)
+        }
+    })
+
+    return matchedPolicies
 }
 
 /**
