@@ -50,7 +50,7 @@ for(let i=0; i<usersToCheck.length; i++) {
 
         let policiesForResource = utils.policiesByResource(resource, policiesForUser);
 
-      
+        
         if(policiesForResource.length > 0) {
             utils.output(programParams.format, `     RESOURCE: ${resource.name} (${resource.id})`)
             policiesForResource.forEach(function(resourcePolicy, key) {

@@ -192,6 +192,12 @@ utils.loadPolicies = function() {
 
             if(resource_attribute.name == "resourceType") {
                object.resource_type = resource_attribute.value
+
+               // if policy only for resource group, change service type to None to 
+               // explictly state that
+               if(object.resource_type == "resource-group") {
+                   object.service_type = "none"
+               }
             }
         }
 
