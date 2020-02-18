@@ -32,7 +32,13 @@ async function mainLoop(usersArr) {
     utils.output(programParams.format,"", ["User", "Email", "Last Token Refresh", "Groups"])
     for(let i=0;i<usersArr.length;i++) {
         let user = usersArr[i]
-        await collectLogDNARecord(user)
+        try {
+            await collectLogDNARecord(user)
+        } catch(e) {
+            console.log(e.message)
+            return;
+        }
+        
         utils.output(programParams.format, "-----------")
     }
 }
@@ -71,6 +77,11 @@ async function collectLogDNARecord(user) {
                     // console.log(typeof logMetrics)
                     delete buffer
                     buffer = null;
+
+                    if(logMetrics.error) {
+                        reject(new Error(logMetrics.error))
+                        return;
+                    }
         
                     let message = logMetrics.message
                     let userM = message.substring(message.indexOf('refreshtoken') + 13)

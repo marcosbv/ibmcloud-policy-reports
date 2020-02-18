@@ -337,7 +337,7 @@ utils.policiesForServices = function(services, policies) {
               "enterprise",
               "globalcatalog"
            ])
-           console.log(services)
+        //   console.log(services)
            break;
        }
     }
