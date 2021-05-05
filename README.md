@@ -89,6 +89,14 @@ ServiceNames: list of service names to look for. This program looks for exact se
 *Note: the service name can be retrieved using the command 
 ```ibmcloud catalog service-marketplace```*
 
+**cfUserPolicies.js**: Returns a list of Cloud Foundry permissions by user, organization and space. The list also returns the applications that a space contains.
+This report is on CSV format only.
+
+```
+node cfUserPolicies.js [<UserEmail> <UserEmail2> ...]
+```
+
+UserEmail: optional list of user emails to filter the output.
 
 ## Limitations and Known Issues
 

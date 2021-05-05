@@ -162,6 +162,7 @@ utils.loadPolicies = function() {
         object.service_type = "all_iam_services"
         object.region = "all"
         object.resource = "all"
+        object.isServiceIdRole=false
 
         let resource_attributes = policy.resources[0].attributes
 
@@ -398,6 +399,116 @@ utils.output = function(format, line, csvArr) {
             }
         }
     }
+}
+
+/**
+ * Loads all organization and spaces, with respective roles and users.
+ * @returns 
+ */
+utils.loadCFOrgsSpaces = function () {
+    const orgs = require('./data/organizations.json')
+    const spaces = require('./data/spaces.json')
+    const users = require('./data/users.json')
+
+    const cfOrgs = []
+
+    for (const org of orgs.resources) {
+        const uuid = org.metadata.guid
+        const name = org.entity.name
+        const managers_file = require(`./data/org_${uuid}_managers.json`)
+        const auditors_file = require(`./data/org_${uuid}_auditors.json`)
+        const billing_managers_file = require(`./data/org_${uuid}_billing_managers.json`)
+
+        const managers = managers_file.resources.map(x => {
+            const m = users.filter(y => y.uaaGuid == x.metadata.guid)
+            if (m.length > 0) {
+                return m[0].email
+            } else {
+                return x.guid
+            }
+        })
+
+        const billing_managers = billing_managers_file.resources.map(x => {
+            const m = users.filter(y => y.uaaGuid == x.metadata.guid)
+            if (m.length > 0) {
+                return m[0].email
+            } else {
+                return x.guid
+            }
+        })
+
+        const auditors = auditors_file.resources.map(x => {
+            const m = users.filter(y => y.uaaGuid == x.metadata.guid)
+            if (m.length > 0) {
+                return m[0].email
+            } else {
+                return x.guid
+            }
+        })
+
+        cfOrgs.push({
+            name: name,
+            uuid: uuid,
+            managers: managers,
+            auditors: auditors,
+            billing_managers: billing_managers,
+            spaces: []
+        })
+    }
+
+    for (const space of spaces.resources) {
+        const uuid = space.metadata.guid
+        const name = space.entity.name
+        const org_id = space.entity.organization_guid
+        const managers_file = require(`./data/space_${uuid}_managers.json`)
+        const auditors_file = require(`./data/space_${uuid}_auditors.json`)
+        const developers_file = require(`./data/space_${uuid}_developers.json`)
+
+        const orgObj = cfOrgs.filter(x => {
+            return x.uuid == org_id
+        })
+
+
+        const managers = managers_file.resources.map(x => {
+            const m = users.filter(y => y.uaaGuid == x.metadata.guid)
+            if (m.length > 0) {
+                return m[0].email
+            } else {
+                return x.guid
+            }
+        })
+
+        const developers = developers_file.resources.map(x => {
+            const m = users.filter(y => y.uaaGuid == x.metadata.guid)
+            if (m.length > 0) {
+                return m[0].email
+            } else {
+                return x.guid
+            }
+        })
+
+        const auditors = auditors_file.resources.map(x => {
+            const m = users.filter(y => y.uaaGuid == x.metadata.guid)
+            if (m.length > 0) {
+                return m[0].email
+            } else {
+                return x.guid
+            }
+        })
+
+        if (orgObj.length > 0) {
+            orgObj[0].spaces.push({
+                name: name,
+                uuid: uuid,
+                managers: managers,
+                auditors: auditors,
+                developers: developers
+            })
+        }
+
+    }
+
+    return cfOrgs
 }
 
 module.exports = utils
