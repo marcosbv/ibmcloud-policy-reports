@@ -33,7 +33,7 @@ function userInMap(user, organization, space, role, space_uuid) {
     }
 }
 
-console.log(`Organization;Space;Role;User`)
+//console.log(`Organization;Space;Role;User`)
 for(const org of orgInfo) {
     const orgName = org.name
     for(const role of ['auditors','billing_managers','managers']) {
