@@ -1,0 +1,32 @@
+[
+	{
+		"key": "CDN_3",
+		"keyName": "CDN_BANDWIDTH_VIEW",
+		"name": "View CDN Bandwidth Statistics"
+	},
+	{
+		"key": "VG_1",
+		"keyName": "VIRTUAL_GUEST_VIEW",
+		"name": "View Virtual Server Details"
+	},
+	{
+		"key": "H_5",
+		"keyName": "LICENSE_VIEW",
+		"name": "View licenses"
+	},
+	{
+		"key": "VH_1",
+		"keyName": "DEDICATED_HOST_VIEW",
+		"name": "View Virtual Dedicated Host Details"
+	},
+	{
+		"key": "H_1",
+		"keyName": "HARDWARE_VIEW",
+		"name": "View Hardware Details"
+	},
+	{
+		"key": "B_1",
+		"keyName": "BANDWIDTH_MANAGE",
+		"name": "View Bandwidth Statistics"
+	}
+]

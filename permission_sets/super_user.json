@@ -1,0 +1,292 @@
+[
+	{
+		"key": "SO_9",
+		"keyName": "VIEW_CUSTOMER_SOFTWARE_PASSWORD",
+		"name": "View Customer Software Password"
+	},
+	{
+		"key": "NET_3",
+		"keyName": "NETWORK_TUNNEL_MANAGE",
+		"name": "Manage IPSEC Network Tunnels"
+	},
+	{
+		"key": "SO_4",
+		"keyName": "VIEW_URCHIN",
+		"name": "View Urchin"
+	},
+	{
+		"key": "DNS_1",
+		"keyName": "DNS_MANAGE",
+		"name": "Manage DNS"
+	},
+	{
+		"key": "PO_1",
+		"keyName": "PORT_CONTROL",
+		"name": "Manage Port Control"
+	},
+	{
+		"key": "LBS_1",
+		"keyName": "LOADBALANCER_MANAGE",
+		"name": "Manage Load Balancers"
+	},
+	{
+		"key": "NET_2",
+		"keyName": "NETWORK_VLAN_SPANNING",
+		"name": "Manage Network VLAN Spanning"
+	},
+	{
+		"key": "CDN_3",
+		"keyName": "CDN_BANDWIDTH_VIEW",
+		"name": "View CDN Bandwidth Statistics"
+	},
+	{
+		"key": "NET_1",
+		"keyName": "NETWORK_ROUTE_MANAGE",
+		"name": "Manage Network Subnet Routes"
+	},
+	{
+		"key": "VG_1",
+		"keyName": "VIRTUAL_GUEST_VIEW",
+		"name": "View Virtual Server Details"
+	},
+	{
+		"key": "SO_7",
+		"keyName": "VIEW_QUANTASTOR",
+		"name": "View QuantaStor"
+	},
+	{
+		"key": "DA_1",
+		"keyName": "DATACENTER_ACCESS",
+		"name": "Physically Access a Datacenter"
+	},
+	{
+		"key": "SO_2",
+		"keyName": "VIEW_PLESK",
+		"name": "View Plesk"
+	},
+	{
+		"key": "A_7",
+		"keyName": "SERVICE_ADD",
+		"name": "Add\/Upgrade Services"
+	},
+	{
+		"key": "H_5",
+		"keyName": "LICENSE_VIEW",
+		"name": "View licenses"
+	},
+	{
+		"key": "SE_3",
+		"keyName": "SOFTWARE_FIREWALL_MANAGE",
+		"name": "Manage Firewall Software"
+	},
+	{
+		"key": "SE_6",
+		"keyName": "HOST_ID_MANAGE",
+		"name": "Host IDS"
+	},
+	{
+		"key": "NTF_1",
+		"keyName": "NTF_SUBSCRIBER_MANAGE",
+		"name": "Manage Notification Subscribers"
+	},
+	{
+		"key": "CDN_1",
+		"keyName": "CDN_ACCOUNT_MANAGE",
+		"name": "Manage CDN Account"
+	},
+	{
+		"key": "NET_5",
+		"keyName": "MANAGE_SECURITY_GROUPS",
+		"name": "Manage Security Groups"
+	},
+	{
+		"key": "A_6",
+		"keyName": "SERVER_CANCEL",
+		"name": "Cancel Server"
+	},
+	{
+		"key": "A_8",
+		"keyName": "SERVICE_UPGRADE",
+		"name": "Upgrade Services"
+	},
+	{
+		"key": "SE_2",
+		"keyName": "FIREWALL_MANAGE",
+		"name": "Manage Firewalls"
+	},
+	{
+		"key": "VPN_1",
+		"keyName": "VPN_MANAGE",
+		"name": "VPN Administration"
+	},
+	{
+		"key": "VH_1",
+		"keyName": "DEDICATED_HOST_VIEW",
+		"name": "View Virtual Dedicated Host Details"
+	},
+	{
+		"key": "SO_1",
+		"keyName": "VIEW_CPANEL",
+		"name": "View cPanel"
+	},
+	{
+		"key": "A_0",
+		"keyName": "USER_MANAGE",
+		"name": "Manage Users"
+	},
+	{
+		"key": "A_9",
+		"keyName": "SERVICE_CANCEL",
+		"name": "Cancel Services"
+	},
+	{
+		"key": "A_11",
+		"keyName": "INSTANCE_UPGRADE",
+		"name": "Add\/Upgrade Cloud Instances"
+	},
+	{
+		"key": "DA_2",
+		"keyName": "DATACENTER_ROOM_ACCESS",
+		"name": "Physically Access a Customer's Colo Cage"
+	},
+	{
+		"key": "SM_1",
+		"keyName": "SAML_AUTHENTICATION_MANAGE",
+		"name": "Manage SAML Authentication"
+	},
+	{
+		"key": "SO_8",
+		"keyName": "CUSTOMER_POST_PROVISION_SCRIPT_MANAGEMENT",
+		"name": "Manage Provisioning Scripts"
+	},
+	{
+		"key": "A_10",
+		"keyName": "ADD_SERVICE_STORAGE",
+		"name": "Add\/Upgrade Storage (StorageLayer)"
+	},
+	{
+		"key": "XX_1",
+		"keyName": "SERVER_ADD",
+		"name": "Add Server"
+	},
+	{
+		"key": "H_4",
+		"keyName": "SERVER_RELOAD",
+		"name": "OS Reloads and Rescue Kernel"
+	},
+	{
+		"key": "NET_4",
+		"keyName": "NETWORK_MESSAGE_DELIVERY_MANAGE",
+		"name": "Manage E-mail Delivery Service"
+	},
+	{
+		"key": "SE_10",
+		"keyName": "CUSTOMER_SSH_KEY_MANAGEMENT",
+		"name": "Manage SSH Keys"
+	},
+	{
+		"key": "I_1",
+		"keyName": "PUBLIC_IMAGE_MANAGE",
+		"name": "Manage Public Images"
+	},
+	{
+		"key": "GTW_1",
+		"keyName": "GATEWAY_MANAGE",
+		"name": "Manage Network Gateways"
+	},
+	{
+		"key": "H_3",
+		"keyName": "MONITORING_MANAGE",
+		"name": "Manage Device Monitoring"
+	},
+	{
+		"key": "SE_7",
+		"keyName": "VULN_SCAN_MANAGE",
+		"name": "Vulnerability Scanning"
+	},
+	{
+		"key": "CDN_2",
+		"keyName": "CDN_FILE_MANAGE",
+		"name": "Manage CDN File Transfers"
+	},
+	{
+		"key": "NET_6",
+		"keyName": "PUBLIC_NETWORK_COMPUTE",
+		"name": "Add Compute with Public Network Port"
+	},
+	{
+		"key": "H_1",
+		"keyName": "HARDWARE_VIEW",
+		"name": "View Hardware Details"
+	},
+	{
+		"key": "SO_3",
+		"keyName": "VIEW_HELM",
+		"name": "View Helm"
+	},
+	{
+		"key": "A_5",
+		"keyName": "SERVER_UPGRADE",
+		"name": "Upgrade Server"
+	},
+	{
+		"key": "H_2",
+		"keyName": "REMOTE_MANAGEMENT",
+		"name": "IPMI Remote Management"
+	},
+	{
+		"key": "NAS_1",
+		"keyName": "LOCKBOX_MANAGE",
+		"name": "Manage Lockbox"
+	},
+	{
+		"key": "NAS_2",
+		"keyName": "NAS_MANAGE",
+		"name": "Storage Manage"
+	},
+	{
+		"key": "FW_1",
+		"keyName": "FIREWALL_RULE_MANAGE",
+		"name": "Manage Firewall Rules"
+	},
+	{
+		"key": "SE_8",
+		"keyName": "SECURITY_CERTIFICATE_VIEW",
+		"name": "View Certificates (SSL)"
+	},
+	{
+		"key": "SE_9",
+		"keyName": "SECURITY_CERTIFICATE_MANAGE",
+		"name": "Manage Certificates (SSL)"
+	},
+	{
+		"key": "SG_1",
+		"keyName": "SCALE_GROUP_MANAGE",
+		"name": "Manage Auto Scale Groups"
+	},
+	{
+		"key": "B_1",
+		"keyName": "BANDWIDTH_MANAGE",
+		"name": "View Bandwidth Statistics"
+	},
+	{
+		"key": "H_6",
+		"keyName": "IP_ADD",
+		"name": "Add IP Addresses"
+	},
+	{
+		"key": "SE_4",
+		"keyName": "ANTI_MALWARE_MANAGE",
+		"name": "Manage Antivirus\/Spyware"
+	},
+	{
+		"key": "H_7",
+		"keyName": "HOSTNAME_EDIT",
+		"name": "Edit Hostname\/Domain"
+	},
+	{
+		"key": "A_15",
+		"keyName": "USER_EVENT_LOG_VIEW",
+		"name": "View Event Log"
+	}
+]

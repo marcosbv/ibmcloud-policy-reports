@@ -1,0 +1,107 @@
+[
+	{
+		"key": "DNS_1",
+		"keyName": "DNS_MANAGE",
+		"name": "Manage DNS"
+	},
+	{
+		"key": "PO_1",
+		"keyName": "PORT_CONTROL",
+		"name": "Manage Port Control"
+	},
+	{
+		"key": "LBS_1",
+		"keyName": "LOADBALANCER_MANAGE",
+		"name": "Manage Load Balancers"
+	},
+	{
+		"key": "CDN_3",
+		"keyName": "CDN_BANDWIDTH_VIEW",
+		"name": "View CDN Bandwidth Statistics"
+	},
+	{
+		"key": "VG_1",
+		"keyName": "VIRTUAL_GUEST_VIEW",
+		"name": "View Virtual Server Details"
+	},
+	{
+		"key": "H_5",
+		"keyName": "LICENSE_VIEW",
+		"name": "View licenses"
+	},
+	{
+		"key": "SE_3",
+		"keyName": "SOFTWARE_FIREWALL_MANAGE",
+		"name": "Manage Firewall Software"
+	},
+	{
+		"key": "SE_6",
+		"keyName": "HOST_ID_MANAGE",
+		"name": "Host IDS"
+	},
+	{
+		"key": "NTF_1",
+		"keyName": "NTF_SUBSCRIBER_MANAGE",
+		"name": "Manage Notification Subscribers"
+	},
+	{
+		"key": "SE_2",
+		"keyName": "FIREWALL_MANAGE",
+		"name": "Manage Firewalls"
+	},
+	{
+		"key": "VH_1",
+		"keyName": "DEDICATED_HOST_VIEW",
+		"name": "View Virtual Dedicated Host Details"
+	},
+	{
+		"key": "A_0",
+		"keyName": "USER_MANAGE",
+		"name": "Manage Users"
+	},
+	{
+		"key": "NET_4",
+		"keyName": "NETWORK_MESSAGE_DELIVERY_MANAGE",
+		"name": "Manage E-mail Delivery Service"
+	},
+	{
+		"key": "H_3",
+		"keyName": "MONITORING_MANAGE",
+		"name": "Manage Device Monitoring"
+	},
+	{
+		"key": "SE_7",
+		"keyName": "VULN_SCAN_MANAGE",
+		"name": "Vulnerability Scanning"
+	},
+	{
+		"key": "H_1",
+		"keyName": "HARDWARE_VIEW",
+		"name": "View Hardware Details"
+	},
+	{
+		"key": "H_2",
+		"keyName": "REMOTE_MANAGEMENT",
+		"name": "IPMI Remote Management"
+	},
+	{
+		"key": "FW_1",
+		"keyName": "FIREWALL_RULE_MANAGE",
+		"name": "Manage Firewall Rules"
+	},
+	{
+		"key": "B_1",
+		"keyName": "BANDWIDTH_MANAGE",
+		"name": "View Bandwidth Statistics"
+	},
+	{
+		"key": "H_6",
+		"keyName": "IP_ADD",
+		"name": "Add IP Addresses"
+	},
+	{
+		"key": "SE_4",
+		"keyName": "ANTI_MALWARE_MANAGE",
+		"name": "Manage Antivirus\/Spyware"
+	}
+]
