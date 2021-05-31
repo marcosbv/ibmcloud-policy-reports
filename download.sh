@@ -2,7 +2,7 @@
 
  echo '* Downloading script files...'
 
-for i in gatherData.sh policiesForResource.js resourceAccessForUser.js utils.js policiesForRole.js latestUserLogin.js saveAndUploadCSVReports.sh policiesForService.js policiesByUserAndAccessGroup.js generateReports.sh
+for i in cfUserPolicies.js gatherData.sh policiesForResource.js resourceAccessForUser.js utils.js policiesForRole.js latestUserLogin.js saveAndUploadCSVReports.sh policiesForService.js policiesByUserAndAccessGroup.js generateReports.sh
 do
     curl -sL https://raw.githubusercontent.com/marcosbv/ibmcloud-policy-reports/master/$i -o $i
 done
