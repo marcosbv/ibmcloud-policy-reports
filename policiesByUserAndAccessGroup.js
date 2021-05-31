@@ -7,7 +7,7 @@ let userNameList = programParams.args
 
 let users = utils.loadUsers()
 utils.output(programParams.format, `Loaded ${users.size} users.`)
-utils.output(programParams.format, "", ["PolicyID", "User", "AccessGroup", "Roles", "Service", "Region", "Resource"])
+utils.output(programParams.format, "", ["PolicyID", "User", "Email", "AccessGroup", "Roles", "Service", "Region", "Resource"])
 
 let usersToCheck = []
 
@@ -50,7 +50,7 @@ for(let i=0;i<usersToCheck.length;i++) {
            }
        }
        utils.output(programParams.format,`Id=${policy.id}, Access Group=${policy.subject.indexOf('AccessGroup') == 0 ? accessGroups.get(policy.subject).name : 'Nenhum'} Roles=${policy.roles}\n    [Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceName}]`,
-       [policy.id, `${user.name} (${user.email})`, policy.subject.indexOf('AccessGroup') == 0 ? accessGroups.get(policy.subject).name : 'None',
+       [policy.id, `${user.name}`, user.email, policy.subject.indexOf('AccessGroup') == 0 ? accessGroups.get(policy.subject).name : 'None',
        policy.roles, policy.service_type, policy.region, `${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceName}` ])
     }
 }
