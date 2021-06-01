@@ -54,7 +54,7 @@ function guessPermissionSet(permissions) {
 
             return ['Basic_User'].concat(additionalPermissions).join(',')
         } else {
-            if(viewPermission) {
+            if(viewUserPermission) {
                 for(const permission of permissions) {
                     const d = viewUserPermissions.filter(x => x.keyName == permission.keyName)
                     if(d.length == 0) {
@@ -82,8 +82,31 @@ for(const hardware of hardwares) {
             const role = guessPermissionSet(permissions)
             console.log(`${fullName};${user.email};${role}`)
         }
+    }  
+}
+
+for(const vsi of vsis) {
+    const fullName = `${vsi.domain}.${vsi.hostname}`
+    for(const user of sl_users) {
+        const permissions = require(`./data/${user.id}_permissions.json`)
+        const allowedHWIds = require(`./data/${user.id}_allowedvirtualguestids.json`).filter(x => x == vsi.id)
+
+        if(allowedHWIds.length > 0) {
+            const role = guessPermissionSet(permissions)
+            console.log(`${fullName};${user.email};${role}`)
+        }
+    }
+}
+
+for(const user of sl_users) {
+    const permissions = require(`./data/${user.id}_permissions.json`)
+    const allowedHWIds = require(`./data/${user.id}_allowedhardwareids.json`)
+    const vsis = require(`./data/${user.id}_allowedvirtualguestids.json`)
+
+    if(allowedHWIds.length == 0 && vsis.length == 0 && permissions.length > 0) {
+        const role = guessPermissionSet(permissions)
+        console.log(`No_Explicit_Device;${user.email};${role}`)
     }
 
-    
-
 }
+
