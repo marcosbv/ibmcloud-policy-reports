@@ -10,9 +10,19 @@ let policies = utils.loadPolicies()
 
 let programParams = utils.extractParameters(process.argv)
 
+const regionUrl = programParams.args[1] || "api.eu-de.logging.cloud.ibm.com"
+const filters = programParams.args[2] || "action:user-management.user.create OR action:user-management.user.delete OR (action:iam-am.policy -action:iam-am.policy.read) OR action:iam-groups.member OR action:iam-groups.group.create OR action:iam-groups.group.update OR action:iam-identity.access-group.dynamic.assign OR iam-groups.federated-member OR action:iam-groups.group.delete OR action:iam-groups.rule.create OR action:iam-groups.rule.delete OR action:iam-groups.update -failure"
+const outputFileName = programParams.args[3] || "./data/iamEvents.json"
+
+let cfOrgsSpaces = null;
+
+if(programParams.args.length > 1) {
+    cfOrgsSpaces = utils.loadCFOrgsSpaces()
+}
+
 var params = {
-    url : "https://api.eu-de.logging.cloud.ibm.com/v1/export",
-    filters : "action:user-management.user.create OR action:user-management.user.delete OR (action:iam-am.policy -action:iam-am.policy.read) OR action:iam-groups.member OR action:iam-groups.group.create OR action:iam-groups.group.update OR action:iam-groups.group.delete -failure",
+    url : `https://${regionUrl}/v1/export`,
+    filters : filters,
     service_key: programParams.args[0],
 }
 
@@ -43,10 +53,18 @@ async function mainLoop() {
 
     for(const json of actions) {
         let obj = commonProperties(json)
+
+        // weird duplicated entry for dynamic rule creation event
+        if(json.action == "iam-groups.rule.create" && !json.responseData.id) {
+            continue;
+        }
+
         switch(json.action) {
             case "iam-groups.group.create": obj.details = processIAMGroups('create', json); break;
             case "iam-groups.group.delete": obj.details = processIAMGroups('delete', json); break;
             case "iam-groups.member.add" : obj.details = processIAMGroupAddMember(json, userMapping); break;
+            case "iam-groups.federated-member.add" : obj.details = processIAMGroupAddMember(json, userMapping); break;
+            case "iam-groups.federated-member.delete" : obj.details = processIAMGroupDeleteMember(json, userMapping); break;
             case "iam-groups.member.delete" : obj.details = processIAMGroupDeleteMember(json, userMapping); break;
             case "iam-groups.member.update" : obj.details = processIAMGroupUpdateMember(json); break;
             case "user-management.user.create" : obj.details = processIAMUsers('add', json); break;
@@ -54,14 +72,61 @@ async function mainLoop() {
             case "iam-am.policy.update" : obj.details = processUpdatePolicy(json); break;
             case "iam-am.policy.create" : obj.details = processCreatePolicy(json); break;
             case "iam-am.policy.delete" : obj.details = await processDeletePolicy(json); break;
-            default: break;
+            case "iam-groups.rule.create" : obj.details = processDynamicRuleCreate(json); break;
+            case "iam-groups.rule.delete" : obj.details = processDynamicRuleDelete(json); break;
+            case "iam-groups.rule.update" : obj.details = processDynamicRuleUpdate(json); break;
+            default: obj.details = cloudFoundryEvents(json); break;
         }
 
         outputEvents.push(obj)
+        
     }
    
-    await fs.writeFileSync('./data/iamEvents.json',Buffer.from(JSON.stringify(outputEvents)))
+    await fs.writeFileSync(outputFileName,Buffer.from(JSON.stringify(outputEvents)))
 
+}
+
+function cloudFoundryEvents(json) {
+
+    if(json.action.indexOf("audit.user") != 0) {
+        return {}
+    } 
+
+    const parts = json.action.split("_");
+    let organizationName = json.requestData.organization_guid
+    let spaceName = json.requestData.space_guid
+
+    // lookup org and space names (if available)
+    if(cfOrgsSpaces) {
+       const orgObj = cfOrgsSpaces.filter(x => x.uuid == organizationName)
+       if(orgObj.length > 0) {
+           organizationName = orgObj[0].name
+
+           if(parts[0] == "audit.user.space") {
+              const spaceObj = orgObj[0].spaces.filter(x => x.uuid == spaceName)
+              if(spaceObj.length > 0) {
+                  spaceName = spaceObj[0].name
+              }
+           }
+       } 
+    }
+
+    // lookup user
+    let userName = json.target.id
+    users.forEach((x) => {
+        if(x.uaaGuid == userName) {
+            userName = x.email
+        }
+    })
+
+    const message = `${parts[2] == "remove" ? "Removed" : "Added"} role ${parts[1]} to user ${userName} into organization ${organizationName}${spaceName && spaceName!="" ? " and space " + spaceName : ""}`
+    return {
+        targetName: `${organizationName}_${spaceName}`,
+        action : parts[2],
+        targetType: 'cf-group',
+        message: message
+    }
+    
 }
 
 function commonProperties(json) {
@@ -69,7 +134,7 @@ function commonProperties(json) {
         action: json.action,
         eventTime : json.eventTime,
         author: json.initiator.name,
-        event_id: `${json.correlationId}_${json.action}`,
+        event_id: `${json.correlationId}_${json.action}_${Date.parse(json.eventTime)}`,
         transaction_id: json.correlationId
     }
 }
@@ -345,6 +410,41 @@ function processCreatePolicy(json) {
     }
 }
 
+function processDynamicRuleCreate(json) {
+    const targetName = json.target.name
+    const conditions = json.requestData.conditions.map(x => `SAML attribute '${x.claim}' '${x.operator}' '${x.value}'`)
+
+    return {
+        targetName : targetName,
+        newValue: json.requestData,
+        action : 'create',
+        targetType: 'group',
+        message: `Created ${json.responseData.id} for access group ${targetName} with the following conditions: [${conditions.join(" AND ")}] (RealmID=${json.requestData.realm_name})`
+    }
+}
+
+function processDynamicRuleDelete(json) {
+    const targetName = json.target.name
+
+    return {
+        targetName : targetName,
+        action : 'delete',
+        targetType: 'group',
+        message: `Deleted ${json.requestData.rule_id} for access group ${targetName}`
+    }
+}
+
+function processDynamicRuleUpdate(json) {
+    const targetName = json.target.name
+
+    const conditions = json.responseData.conditions.map(x => `SAML attribute '${x.claim}' '${x.operator}' '${x.value}'`)
+    return {
+        targetName : targetName,
+        action : 'update',
+        targetType: 'group',
+        message: `Updated ${json.responseData.rule_id} for access group ${targetName} (New Values: [${conditions.join(" AND ")}] (RealmID=${json.requestData.realm_name}))`
+    }
+}
 async function collectLogDNARecord(params) {
    
     return promise = new Promise(function(resolve,reject) {

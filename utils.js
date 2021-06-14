@@ -69,7 +69,8 @@ utils.loadUsers = function() {
        let object = {}
        object.id = user.ibmUniqueId
        object.name = `${user.firstname} ${user.lastname}`
-       object.email = user.userId
+       object.email = user.userId.indexOf('@') >= 0 ? user.userId : user.email
+       object.uaaGuid = user.uaaGuid
        
        objects.set(object.id, object)
    }
