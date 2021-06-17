@@ -48,7 +48,7 @@ async function collectLogDNARecord(user) {
     return promise = new Promise(function(resolve,reject) {
         let newUrl = `${params.url}?prefer=tail&to=${now.getTime()}&from=${timestamp}&query=${encodeURIComponent(params.filters + " " + user.email)}&size=1`
         let options = {
-            method : 'POST',
+            method : 'GET',
             headers : {
                'Content-Type' : 'application/json',
                'Authorization' : 'Basic ' + Buffer.from(params.service_key + ':').toString('base64')
