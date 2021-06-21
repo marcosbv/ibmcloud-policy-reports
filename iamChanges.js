@@ -151,7 +151,10 @@ function processIAMGroups(actionName, json) {
 
 function processIAMGroupDeleteMember(json) {
     const targetName = json.target.name
-    const user = users.get(json.responseData.iam_id)
+
+    const obj = json.responseData ? json.responseData : json.requestData
+    const attribute = obj.iam_id ? obj.iam_id : obj.member_id
+    const user = users.get(attribute)
 
     return {
         targetName: targetName,
