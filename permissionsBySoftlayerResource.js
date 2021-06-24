@@ -6,15 +6,22 @@ const superUserPermissions = require('./permission_sets/super_user.json')
 const viewUserPermissions = require('./permission_sets/view_user.json')
 const basicUserPermissions = require('./permission_sets/basic_user.json')
 
-function guessPermissionSet(permissions) {
+function guessPermissionSet(receivedPermissions) {
 
     let basicPermission = true
     let viewUserPermission = true
     let superUserPermission = true
 
+    // remove permissions migrated to IAM
+    permissions = receivedPermissions.filter((x) => ['TICKET_VIEW','ACCOUNT_SUMMARY_VIEW','TICKET_SEARCH','TICKET_VIEW_ALL','REQUEST_COMPLIANCE_REPORT', 'TICKET_ADD', 'TICKET_EDIT'].indexOf(x.keyName) == -1)
+
+    if(permissions.length == 0 && receivedPermissions.length >= 0) {
+        return 'IAM_Basic_Access'
+    }
     if(permissions.length == 0) {
         return 'No Permission Set';
     }
+
 
     for(const b of basicUserPermissions) {
         const filter = permissions.filter(x => x.keyName == b.keyName)
