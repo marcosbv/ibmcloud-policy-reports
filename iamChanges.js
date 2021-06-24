@@ -27,7 +27,6 @@ var params = {
 }
 
 let timestamp = now.getTime() - 2592000000;
-let userLogins = new Map()
 
 // utils.output(programParams.format, `Loaded ${users.size} users.`)
 
@@ -140,7 +139,9 @@ function commonProperties(json) {
 }
 
 function processIAMGroups(actionName, json) {
-    const targetName = json.target.name
+    let targetName = json.target.name 
+
+    
     return {
         targetName: targetName,
         action: actionName,
@@ -150,7 +151,13 @@ function processIAMGroups(actionName, json) {
 }
 
 function processIAMGroupDeleteMember(json) {
-    const targetName = json.target.name
+    let targetName = json.target.name ? json.target.name : null
+
+    if(targetName == null) {
+        const accessGroupId = json.target.id.split(':')[9]
+        const accessGroup = accessGroups.get(accessGroupId)
+        targetName = accessGroup ? accessGroup.name : accessGroupId
+    }
 
     const obj = json.responseData ? json.responseData : json.requestData
     const attribute = obj.iam_id ? obj.iam_id : obj.member_id
@@ -204,19 +211,26 @@ function processIAMGroupUpdateMember(json) {
         targetType: 'group',
         message: `User ${user ? user.email : iam_id} updated in Group ${targetName}`,
         member: user,
-        iam_id: iam_id
+        iam_id: iam_id,
+        previous_iam_id : json.requestData.previous_iam_id
     }
 }
 
 function processIAMUsers(actionName, json) {
     const user = users.get(json.target.name)
     const email = user ? user.email : json.target.name
-    return {
+    let returnedObj = {
         targetName: email,
         action: actionName,
         targetType: 'user',
         message: `User ${email} ${actionName}${actionName == 'add' ? 'ed' : 'd'} ${actionName == 'remove' ? 'from' : 'to'} account`
     }
+
+    if(actionName!="add") {
+        returnedObj.iam_id = json.target.name
+    }
+
+    return returnedObj
 }
 
 function lookupPolicyOwner(policy) {
