@@ -6,8 +6,15 @@ const orgInfo = utils.loadCFOrgsSpaces()
 
 const usersMap = new Map()
 
+const REMOVE_SELF_ORGANIZATION = process.env.CF_REMOVE_SELF_ORGANIZATION || "true"
 
 function userInMap(user, organization, space, role, space_uuid) {
+
+    // remove self-organization if flag is true 
+    if(REMOVE_SELF_ORGANIZATION=="true" && user == organization) {
+        return;
+    }
+
     const item = usersMap.get(user)
     if(item==null) {
         const obj = {
