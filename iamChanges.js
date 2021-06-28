@@ -167,7 +167,7 @@ function processIAMGroupDeleteMember(json) {
         targetName: targetName,
         action: 'delete',
         targetType: 'group',
-        message: `User ${user ? user : attribute} deleted from Group ${targetName}`,
+        message: `User ${user ? user.email : attribute} deleted from Group ${targetName}`,
         member: user,
         iam_id: attribute
     }
