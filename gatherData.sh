@@ -45,6 +45,10 @@ ibmcloud ks cluster ls -s --json > clusters.json
 # Usuarios:
 ibmcloud account users --output json > users.json
 
+# Account orgs
+ibmcloud account orgs --output json > account_orgs.json
+
+
 ## Dados Cloud Foundry (orgs/spaces)
 set +x
 

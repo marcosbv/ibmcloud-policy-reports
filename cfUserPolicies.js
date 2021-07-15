@@ -1,4 +1,5 @@
 const utils = require('./utils')
+const fs = require('fs');
 
 const users = process.argv.slice(2)
 
@@ -6,7 +7,16 @@ const orgInfo = utils.loadCFOrgsSpaces()
 
 const usersMap = new Map()
 
-const REMOVE_SELF_ORGANIZATION = process.env.CF_REMOVE_SELF_ORGANIZATION || "true"
+const REMOVE_SELF_ORGANIZATION = process.env.CF_REMOVE_SELF_ORGANIZATION || "false"
+
+// Load only account orgs
+let accountOrgIds = []
+const accountOrgsBuffer = fs.readFileSync('./data/account_orgs.json');
+
+if(accountOrgsBuffer.toString().substring(0,4) !="null") {
+    const accountOrgs = JSON.parse(accountOrgsBuffer.toString())
+    accountOrgIds = accountOrgs.map(x => x.OrgGuid)
+}
 
 function userInMap(user, organization, space, role, space_uuid) {
 
@@ -42,6 +52,12 @@ function userInMap(user, organization, space, role, space_uuid) {
 
 //console.log(`Organization;Space;Role;User`)
 for(const org of orgInfo) {
+
+    // filter out non-account organizations
+    if(accountOrgIds.indexOf(org.uuid) == -1) {
+        continue;
+    }
+
     const orgName = org.name
     for(const role of ['auditors','billing_managers','managers']) {
         const users = org[role]
