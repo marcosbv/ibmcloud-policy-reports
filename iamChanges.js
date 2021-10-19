@@ -492,11 +492,17 @@ async function collectLogDNARecord(params) {
                    // console.log(`User: ${user.name} (${user.email})\nLast token refresh: no LogDNA record`)
                    // resolve()
                 
+                    // try / catch to keep going even though there is an exception in place
                     for(const line of data) {
-                        const jsonB = JSON.parse(line)
+                        try {
+                            const jsonB = JSON.parse(line)
                        
-                        const json = JSON.parse(jsonB._line)
-                        actions.push(json)
+                            const json = JSON.parse(jsonB._line)
+                            actions.push(json)
+                        } catch(err) {
+                            console.error(err)
+                        }
+                        
                     }
                     
                 }
