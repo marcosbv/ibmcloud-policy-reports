@@ -74,6 +74,7 @@ async function mainLoop() {
             case "iam-groups.rule.create" : obj.details = processDynamicRuleCreate(json); break;
             case "iam-groups.rule.delete" : obj.details = processDynamicRuleDelete(json); break;
             case "iam-groups.rule.update" : obj.details = processDynamicRuleUpdate(json); break;
+            case "iam-groups.members.list": continue;
             default: obj.details = cloudFoundryEvents(json); break;
         }
 
@@ -370,7 +371,8 @@ async function policyGetRequest(url, token) {
                 buffer.push(chunk)
             })
             response.on('end', function() {
-                const result = JSON.parse(buffer.toString())
+                const data = Buffer.concat(buffer).toString();
+                const result = JSON.parse(data)
                 resolve(result)
             })
         })
