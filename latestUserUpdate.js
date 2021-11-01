@@ -39,8 +39,8 @@ async function mainLoop(usersArr) {
     for(let i=0;i<usersArr.length;i++) {
         let user = usersArr[i]
         try {
-            let lastUpdate = await collectLogDNARecord(user, params)
-            let lastInvite = await collectLogDNARecord(user, params2)
+            let lastUpdate = await collectLogDNARecord(user.id, params)
+            let lastInvite = await collectLogDNARecord(user.email, params2)
 
             utils.output(programParams.format, `User: ${user.name} (${user.email})\nStatus: ${user.state} Latest Update: ${lastUpdate} Latest Invite: ${lastInvite}\n`,
                   [user.name, user.email, user.state, lastUpdate, lastInvite ])
@@ -56,7 +56,7 @@ async function mainLoop(usersArr) {
 async function collectLogDNARecord(user, p) {
    
     return promise = new Promise(function(resolve,reject) {
-        let newUrl = `${params.url}?prefer=tail&to=${now.getTime()}&from=${timestamp}&query=${encodeURIComponent(p.filters + " " + user.id)}&size=1`
+        let newUrl = `${params.url}?prefer=tail&to=${now.getTime()}&from=${timestamp}&query=${encodeURIComponent(p.filters + " target.name:" + user)}&size=1`
         let options = {
             method : 'GET',
             headers : {
