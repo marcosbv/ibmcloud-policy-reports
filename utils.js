@@ -71,6 +71,7 @@ utils.loadUsers = function() {
        object.name = `${user.firstname} ${user.lastname}`
        object.email = user.userId.indexOf('@') >= 0 ? user.userId : user.email
        object.uaaGuid = user.uaaGuid
+       object.state = user.state
        
        objects.set(object.id, object)
    }

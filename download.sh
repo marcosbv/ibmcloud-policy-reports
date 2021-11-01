@@ -3,7 +3,7 @@
  echo '* Downloading script files...'
 
 mkdir -p permission_sets
-for i in cfUserPolicies.js gatherData.sh policiesForResource.js resourceAccessForUser.js utils.js policiesForRole.js latestUserLogin.js saveAndUploadCSVReports.sh policiesForService.js policiesByUserAndAccessGroup.js generateReports.sh permissionsBySoftlayerResource.js gatherSoftlayerData.sh permission_sets/basic_user.json permission_sets/view_user.json permission_sets/super_user.json gatherCP4DaaSData.js gatherCP4DaaSData.sh iamChanges.js
+for i in cfUserPolicies.js gatherData.sh policiesForResource.js resourceAccessForUser.js utils.js policiesForRole.js latestUserLogin.js saveAndUploadCSVReports.sh policiesForService.js policiesByUserAndAccessGroup.js generateReports.sh permissionsBySoftlayerResource.js gatherSoftlayerData.sh permission_sets/basic_user.json permission_sets/view_user.json permission_sets/super_user.json gatherCP4DaaSData.js gatherCP4DaaSData.sh iamChanges.js latestUserUpdate.js
 do
     curl -sL https://raw.githubusercontent.com/marcosbv/ibmcloud-policy-reports/master/$i -o $i
 done
