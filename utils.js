@@ -48,12 +48,67 @@ utils.loadResources = function() {
         objects.set(object.id, object)
     }
 
+ // Load objects from Global Search
+    try {
+        loadFromGlobalSearch('./data/vpc_resources.json', true, objects)
+    } catch(err) {
+        console.error(err)
+    }
+    
+    try {
+        loadFromGlobalSearch('./data/networking_resources.json', false, objects)
+    } catch(err) {
+        console.error(err)
+    }
+    
+
+    try {
+        loadFromGlobalSearch('./data/vmware_resources.json', false, objects)
+    } catch(err) {
+        console.error(err)
+    }
     resources = null;
     clusters = null;
+
     delete resources;
     delete clusters;
+    delete vpc_resources;
 
     return objects
+}
+
+function loadFromGlobalSearch(file, vpc_deep, objects) {
+    let gsResources = require(file)
+    
+    for(const resource of gsResources.items) {
+        let object = {}
+        object.name = resource.name
+        
+        let id = resource.crn
+        let id_parts = id.split(":")
+   
+        object.service_type = id_parts[4]
+        object.region = id_parts[5]
+        object.subtype = id_parts[8]
+        object.id = id_parts[9]
+
+        if(resource.doc && resource.doc.createdDate) {
+            object.created_at = resource.doc.createdDate 
+        } else {
+            object.created_at = ""
+        }
+        
+        if(vpc_deep == true) {
+            if(resource.doc.vpc) {
+                object.parentResource = resource.doc.vpc.id
+            }
+        }
+        object.resource_group = resource.doc.resource_group ? resource.doc.resource_group.id : resource.doc.resource_group_id
+
+        objects.set(object.id, object)
+    }
+
+   // console.log(objects)
 }
 
 /**
@@ -172,6 +227,10 @@ utils.loadPolicies = function() {
             let resource_attribute = resource_attributes[j]
             if(resource_attribute.name == "serviceName") {
                 object.service_type = resource_attribute.value
+
+                if(resource_attribute.value == "is") {
+                    computeVPCPolicy(policy, object)
+                }
             }
 
             if(resource_attribute.name == "region") {
@@ -191,6 +250,7 @@ utils.loadPolicies = function() {
                 if(resource_attribute.value == "platform_service") {
                     object.service_type = "all_account_services" 
                 }
+
             }
 
             if(resource_attribute.name == "resourceType") {
@@ -220,6 +280,44 @@ utils.loadPolicies = function() {
     return objects
 }
 
+function computeVPCPolicy(policy, object) {
+    let resourceAttributes = policy.resources[0].attributes
+
+    const VPC_SUBTYPES = [
+        ["dedicatedHostGroup", "dedicated-host-group"],
+        ["endpointGateway", "endpoint-gateway"],
+        ["flowLogCollector", "flow-log-collector"],
+        ["instanceGroup", "instance-group"],
+        ["loadBalancer", "load-balancer"],
+        ["placementGroup", "placement-group"],
+        ["publicGateway", "public-gateway"],
+        ["securityGroup", "security-group"],
+        ["subnet", "subnet"],
+        ["vpc", "vpc"],
+        ["floatingIp", "floating-ip"],
+        ["image", "image"],
+        ["instance", "instance"],
+        ["key", "key"],
+        ["networkAcl", "network-acl"],
+        ["snapshot", "snapshot"],
+        ["subnet", "subnet"],
+        ["volume", "volume"],
+        ["vpnGateway", "vpn-gateway"]
+    ]
+    object.service_subtype = "vpc"
+    for(const resourceAttribute of resourceAttributes) {
+        for(const vpcSubtype of VPC_SUBTYPES) {
+            const id = `${vpcSubtype[0]}Id`
+
+            if(resourceAttribute.name == id) {
+                object.service_subtype = vpcSubtype[1]
+                object.resource = resourceAttribute.value
+                return
+            }
+        }       
+    }
+}
+
 /**
  * Get policies that applies to a specific resource.
  * These policies will merge the ones targeted to the resource itself, 
@@ -240,7 +338,29 @@ utils.policiesByResource = function (resource, policies) {
             return
         }
 
-        // 2. matches all resources in platform?
+        // 2. matches parent resource id ? 
+        if(resource.parentResource) {
+            if(policy.resource == resource.parentResource) {
+                policiesList.push(policy)
+                return
+            }
+        }
+
+        // 3. matches filter by subtype type
+        if(policy.service_subtype) {
+            const subtype = policy.service_subtype
+            if(resource.service_type == "is") {
+                if(subtype == resource.subtype) {
+                    if((policy.resource == resource.resource_group && policy.resource_type != "resource-group") || policy.resource == "*") {
+                        if(policy.region == "all" || policy.region == resource.region) {
+                            policiesList.push(policy)
+                            return
+                         }
+                    } 
+                }
+            }
+        }
+        // 4. matches all resources in platform?
         if(policy.resource == "all" && policy.resource_type != "resource-group") {
             if(policy.service_type == resource.service_type || policy.service_type == "all_iam_services") {
                 if(policy.region == "all" || policy.region == resource.region) {
@@ -248,10 +368,11 @@ utils.policiesByResource = function (resource, policies) {
                    return
                 }
             }
+
         }
 
 
-        // 3. matches resource group ?
+        // 5. matches resource group ?
         if(policy.resource == resource.resource_group && policy.resource_type != "resource-group") {
             if(policy.service_type == resource.service_type || policy.service_type == "all_iam_services") {
                 if(policy.region == "all" || policy.region == resource.region) {
@@ -260,6 +381,7 @@ utils.policiesByResource = function (resource, policies) {
                 }
             }
         }
+
 
     })
 

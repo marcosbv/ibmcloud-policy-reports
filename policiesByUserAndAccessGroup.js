@@ -49,8 +49,8 @@ for(let i=0;i<usersToCheck.length;i++) {
               resourceName = resources.get(policy.resource).name
            }
        }
-       utils.output(programParams.format,`Id=${policy.id}, Access Group=${policy.subject.indexOf('AccessGroup') == 0 ? accessGroups.get(policy.subject).name : 'Nenhum'} Roles=${policy.roles}\n    [Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceName}]`,
+       utils.output(programParams.format,`Id=${policy.id}, Access Group=${policy.subject.indexOf('AccessGroup') == 0 ? accessGroups.get(policy.subject).name : 'Nenhum'} Roles=${policy.roles}\n    [Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceName}]`,
        [policy.id, `${user.name}`, user.email, policy.subject.indexOf('AccessGroup') == 0 ? accessGroups.get(policy.subject).name : 'None',
-       policy.roles, policy.service_type, policy.region, `${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceName}` ])
+       policy.roles, policy.service_type + (policy.service_subtype ? `/${policy.service_subtype}` : ""), policy.region, `${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceName}` ])
     }
 }

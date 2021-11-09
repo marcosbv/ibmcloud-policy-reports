@@ -76,9 +76,9 @@ for(let m=0;m<usersToCheck.length;m++) {
 
         // CSV line is written here
         utils.output(programParams.format, `     Policy: Id=${policy.id} Subject=${agName} Roles=${policy.roles} 
-             Target=[Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}]`,
+             Target=[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}]`,
             [userObj.name, userObj.email, policy.id, agName, 
-               `[Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}]`,
+               `[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}]`,
                policy.roles.join(",")
             ]
         )

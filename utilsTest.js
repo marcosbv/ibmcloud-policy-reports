@@ -42,6 +42,7 @@
       console.log("=====>>>GROUPS INSERTED: " + utils.groupsUserBelongsTo(value, access_groups))
   })
 
+  
   console.log("============> POLICIES")
   let policies = utils.loadPolicies()
   console.log(policies)
@@ -99,3 +100,13 @@ argsTest = ["node","myProgram.js", "param0"]
 argsRet = utils.extractParameters(argsTest)
 console.log(`Format=${argsRet.format} Params=${argsRet.args}`)
 
+console.log("============> POLICIES FOR VPC")
+
+   policies.forEach(function(value, key) {
+       if(value.service_type == "is")
+            console.log(value)
+   })
+
+   resources.forEach(function (resource, key) {
+      console.log(resource)
+})

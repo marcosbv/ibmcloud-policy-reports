@@ -46,7 +46,7 @@ for(let i=0; i<resourcesToCheck.length; i++) {
     let policiesForResource = utils.policiesByResource(r, policies)
     let usersToCheck = []
     policiesForResource.forEach(function(policy, key) {
-       if(policy.subject.indexOf("IBMid") >= 0) {
+       if(policy.subject.indexOf("AccessGroup") == -1 && policy.subject.indexOf("iam-Profile") == -1 && policy.subject.indexOf("ServiceId")) {
            if(usersToCheck.indexOf(policy.subject) == -1) {
              usersToCheck.push(policy.subject)
            }
@@ -61,7 +61,7 @@ for(let i=0; i<resourcesToCheck.length; i++) {
            let agMembers = accessGroup.members
 
            for(let l=0;l<agMembers.length;l++) {
-               if(agMembers[l].indexOf("IBMid") >=0 && usersToCheck.indexOf(agMembers[l]) == -1) {
+               if(agMembers[l].indexOf("ServiceId") == -1 && usersToCheck.indexOf(agMembers[l]) == -1) {
                    usersToCheck.push(agMembers[l])
                }
            }
@@ -84,7 +84,7 @@ for(let i=0; i<resourcesToCheck.length; i++) {
            utils.output(programParams.format,`          Policy: Subject=${userPolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(userPolicy.subject).name : user.name}  Roles=${userPolicy.roles} (${userPolicy.id})`,
                        [r.name, user.name, user.email, userPolicy.id, 
                         userPolicy.subject.indexOf("AccessGroup") >=0 ? accessGroups.get(userPolicy.subject).name : user.name,
-                        `[Service: ${userPolicy.service_type}, Region: ${userPolicy.region}, ${resourceGroups.get(userPolicy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(userPolicy.resource)!=null ? resourceGroups.get(userPolicy.resource).name : userPolicy.resource}]`,
+                        `[Service: ${userPolicy.service_type}${userPolicy.service_subtype ? ", Subtype: " + userPolicy.service_subtype : ""}, Region: ${userPolicy.region}, ${resourceGroups.get(userPolicy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(userPolicy.resource)!=null ? resourceGroups.get(userPolicy.resource).name : userPolicy.resource}]`,
                         userPolicy.roles.join(",")
                         ])
        })
@@ -98,7 +98,7 @@ for(let i=0; i<resourcesToCheck.length; i++) {
             // CSV service user line printed HERE!!
             utils.output(programParams.format,`          Policy: Subject=${policy.subject}  Roles=${policy.roles} (${policy.id})`,
             [r.name, policy.subject, "", policy.id, policy.subject,
-                `[Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(policy.resource)!=null ? resourceGroups.get(policy.resource).name : policy.resource}]`,
+                `[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(policy.resource)!=null ? resourceGroups.get(policy.resource).name : policy.resource}}]`,
                 policy.roles.join(",")
             ])
         }
@@ -107,7 +107,7 @@ for(let i=0; i<resourcesToCheck.length; i++) {
     utils.output(programParams.format,"\n     ALL POLICIES FOR RESOURCE:")
     policiesForResource.forEach(function(policy, key) {
         utils.output(programParams.format,`     Policy: Id=${policy.id} Subject=${policy.subject} Roles=${policy.roles} 
-             Target=[Service: ${policy.service_type}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(policy.resource)!=null ? resourceGroups.get(policy.resource).name : policy.resource}]`)
+             Target=[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${resourceGroups.get(policy.resource)!=null ? resourceGroups.get(policy.resource).name : policy.resource}]`)
     })
     utils.output(programParams.format,`(${usersToCheck.length} users, ${policiesForResource.length} policies)`)
 }

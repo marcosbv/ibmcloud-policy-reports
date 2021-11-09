@@ -30,6 +30,7 @@ for i in $(ibmcloud iam access-groups --output json | grep AccessGroupId | cut -
 do 
    echo "Getting members for access group id $i"
    curl -X GET "https://iam.cloud.ibm.com/v2/groups/$i/members?limit=100" -H "Authorization: $TOKEN" -H 'Content-Type: application/json' -o ${i}_members.json; 
+   sleep 1
 done
 
 set -x
@@ -48,9 +49,19 @@ ibmcloud account users --output json > users.json
 # Account orgs
 ibmcloud account orgs --output json > account_orgs.json
 
+# Global Search for networking resources
+#ibmcloud resource search "family:is" --output json > vpc_resources.json
+ibmcloud resource search "type:dedicated OR type:gateway" --output json > networking_resources.json
+ibmcloud resource search "type:vmware*" --output json > vmware_resources.json
+
+# Trusted Profiles
+ibmcloud iam trusted-profiles --output json > trusted_profiles.json
 
 ## Dados Cloud Foundry (orgs/spaces)
 set +x
+
+echo "Getting VPC information through Global Search..."
+curl -X POST "https://api.global-search-tagging.cloud.ibm.com/v3/resources/search?limit=1000&account_id=$ACCOUNT_ID" -H "authorization: Bearer $TOKEN" -d '{"query" : "family:is", "fields" : ["*"]}' -H "Content-Type: application/json"  > vpc_resources.json
 
 echo "Getting CF orgs and spaces..."
 curl -X GET "https://api.us-south.cf.cloud.ibm.com/v2/organizations" -H "Authorization: bearer ${UAA_TOKEN}" -o organizations.json
@@ -62,6 +73,7 @@ do
     curl -X GET "https://api.us-south.cf.cloud.ibm.com/v2/organizations/${i}/managers" -H "Authorization: bearer ${UAA_TOKEN}" -o org_${i}_managers.json
     curl -X GET "https://api.us-south.cf.cloud.ibm.com/v2/organizations/${i}/billing_managers" -H "Authorization: bearer ${UAA_TOKEN}" -o org_${i}_billing_managers.json
     curl -X GET "https://api.us-south.cf.cloud.ibm.com/v2/organizations/${i}/auditors" -H "Authorization: bearer ${UAA_TOKEN}" -o org_${i}_auditors.json
+    sleep 1
 done
 
 for i in `cat spaces.json | grep '"guid"' | cut -d '"' -f4 `
@@ -70,6 +82,7 @@ do
     curl -X GET "https://api.us-south.cf.cloud.ibm.com/v2/spaces/${i}/managers" -H "Authorization: bearer ${UAA_TOKEN}" -o space_${i}_managers.json
     curl -X GET "https://api.us-south.cf.cloud.ibm.com/v2/spaces/${i}/developers" -H "Authorization: bearer ${UAA_TOKEN}" -o space_${i}_developers.json
     curl -X GET "https://api.us-south.cf.cloud.ibm.com/v2/spaces/${i}/auditors" -H "Authorization: bearer ${UAA_TOKEN}" -o space_${i}_auditors.json
+    sleep 1
 done
 
 echo "Loading CF apps..."
