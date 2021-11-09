@@ -312,7 +312,11 @@ function computeVPCPolicy(policy, object) {
             if(resourceAttribute.name == id) {
                 object.service_subtype = vpcSubtype[1]
                 object.resource = resourceAttribute.value
-                return
+            }
+
+            // if there is an assigned resource group, put i on a resource_group attribute
+            if(resourceAttribute.name == "resourceGroupId") {
+                object.resource_group = resourceAttribute.value
             }
         }       
     }
@@ -353,8 +357,17 @@ utils.policiesByResource = function (resource, policies) {
                 if(subtype == resource.subtype) {
                     if((policy.resource == resource.resource_group && policy.resource_type != "resource-group") || policy.resource == "*") {
                         if(policy.region == "all" || policy.region == resource.region) {
-                            policiesList.push(policy)
-                            return
+                            // is there an assigned resource group?
+                            if(policy.resource_group) {
+                               if(resource.resource_group == policy.resource_group) {
+                                  policiesList.push(policy)
+                                  return
+                               }
+                            } else {
+                                policiesList.push(policy)
+                                return
+                            }
+                            
                          }
                     } 
                 }

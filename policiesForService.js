@@ -37,7 +37,7 @@ for(let i=0;i<rolePolicies.length; i++) {
         }
     }
     else {
-        if(rolePolicy.subject.indexOf("IBMid") >= 0) {
+        if(rolePolicy.subject.indexOf("AccessGroup") == -1 && rolePolicy.subject.indexOf("iam-Profile") == -1 && rolePolicy.subject.indexOf("ServiceId") == -1) {
             if(usersToCheck.indexOf(rolePolicy.subject) == -1) {
                 usersToCheck.push(rolePolicy.subject)
             }
@@ -74,11 +74,20 @@ for(let m=0;m<usersToCheck.length;m++) {
             agName = accessGroups.get(policy.subject).name
         }
 
+        let resourceGroup = null
+        if(policy.resource_group) {
+            if(resourceGroups.get(policy.resource_group) != null) {
+                resourceGroup = resourceGroups.get(policy.resource_group).name
+            } else {
+                resourceGroup = policy.resource_group
+            }
+        }
+
         // CSV line is written here
         utils.output(programParams.format, `     Policy: Id=${policy.id} Subject=${agName} Roles=${policy.roles} 
-             Target=[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}]`,
+             Target=[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}${resourceGroup!=null ? ", ResourceGroup: " + resourceGroup : ""}]`,
             [userObj.name, userObj.email, policy.id, agName, 
-               `[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}]`,
+               `[Service: ${policy.service_type}${policy.service_subtype ? ", Subtype: " + policy.service_subtype : ""}, Region: ${policy.region}, ${resourceGroups.get(policy.resource)!=null ? "ResourceGroup" : "Resource"}: ${rName}${resourceGroup!=null ? ", ResourceGroup: " + resourceGroup : ""}]`,
                policy.roles.join(",")
             ]
         )
